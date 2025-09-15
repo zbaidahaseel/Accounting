@@ -1,0 +1,158 @@
+﻿using Accounting_Business.Infrastructure.Responses;
+using Accounting_Business.Mappings;
+using Accounting_Business.Persistence.Entities;
+using Accounting_Business.Persistence.Models;
+using Accounting_Business.Services;
+
+namespace Accounting_Business.Managers
+{
+    public interface IMasterDataManager
+    {
+        Task<Response> GetAllCities();
+        Task<Response> AddCity(CityModel cityModel);
+        Task<Response> DeleteCity(int id);
+        Task<Response> GetAllCostCenters();
+        Task<Response> AddCostCenter(CostCenterModel costCenterModel);
+        Task<Response> DeleteCostCenter(int id);
+        Task<Response> GetAllAgents();
+        Task<Response> AddAgent(AgentModel agentModel);
+        Task<Response> DeleteAgent(int id);
+        Task<Response> GetAllReceivablesPayablesClassifications();
+        Task<Response> AddReceivablesPayablesClassification(ReceivablesPayablesClassificationModel ReceivablesPayablesClassificationModel);
+        Task<Response> DeleteReceivablesPayablesClassification(int id);
+    }
+    public class MasterDataManager : IMasterDataManager
+    {
+        private readonly AppDbContext _context;
+        private readonly ICityService _cityService;
+        private readonly ICostCenterService _costCenterService;
+        private readonly IAgentService _agentService;
+        private readonly IReceivablesPayablesClassificationService _receivablesPayablesClassificationService;
+
+        public MasterDataManager(AppDbContext context,
+            ICityService cityService,
+            ICostCenterService costCenterService,
+            IAgentService agentService,
+            IReceivablesPayablesClassificationService receivablesPayablesClassificationService)
+        {
+            _context = context;
+            _cityService = cityService;
+            _costCenterService = costCenterService;
+            _agentService = agentService;
+            _receivablesPayablesClassificationService = receivablesPayablesClassificationService;
+        }
+
+        public async Task<Response> GetAllCities()
+        {
+            var cities = await _cityService.GetAllCities();
+            return cities.ToSuccessResponseWithModel();
+        }
+
+        public async Task<Response> AddCity(CityModel cityModel)
+        {
+            var city = cityModel.ToEntity();
+           
+            _cityService.Add(city);
+            
+            await _context.SaveChangesAsync();
+
+            return city.Id.ToSuccessResponseWithModel();
+        }
+
+        public async Task<Response> DeleteCity(int id)
+        {
+            var city = await _cityService.Get(id);
+
+            _cityService.Delete(city);
+
+            await _context.SaveChangesAsync();
+
+            return ResponseAction.ToSuccessResponse();
+        }
+
+        public async Task<Response> GetAllCostCenters()
+        {
+            var cities = await _costCenterService.GetAll();
+            return cities.ToSuccessResponseWithModel();
+        }
+
+        public async Task<Response> AddCostCenter(CostCenterModel costCenterModel)
+        {
+            var costCenter = costCenterModel.ToEntity();
+
+            _costCenterService.Add(costCenter);
+
+            await _context.SaveChangesAsync();
+
+            return costCenter.Id.ToSuccessResponseWithModel();
+        }
+
+        public async Task<Response> DeleteCostCenter(int id)
+        {
+            var costCenter = await _costCenterService.Get(id);
+
+            _costCenterService.Delete(costCenter);
+
+            await _context.SaveChangesAsync();
+
+            return ResponseAction.ToSuccessResponse();
+        }
+
+        public async Task<Response> GetAllAgents()
+        {
+            var cities = await _agentService.GetAll();
+            return cities.ToSuccessResponseWithModel();
+        }
+
+        public async Task<Response> AddAgent(AgentModel agentModel)
+        {
+            var agent = agentModel.ToEntity();
+
+            _agentService.Add(agent);
+
+            await _context.SaveChangesAsync();
+
+            return agent.Id.ToSuccessResponseWithModel();
+        }
+
+        public async Task<Response> DeleteAgent(int id)
+        {
+            var agent = await _agentService.Get(id);
+
+            _agentService.Delete(agent);
+
+            await _context.SaveChangesAsync();
+
+            return ResponseAction.ToSuccessResponse();
+        }
+
+        public async Task<Response> GetAllReceivablesPayablesClassifications()
+        {
+            var cities = await _receivablesPayablesClassificationService.GetAll();
+            return cities.ToSuccessResponseWithModel();
+        }
+
+        public async Task<Response> AddReceivablesPayablesClassification(ReceivablesPayablesClassificationModel ReceivablesPayablesClassificationModel)
+        {
+            var receivablesPayablesClassification = ReceivablesPayablesClassificationModel.ToEntity();
+
+            _receivablesPayablesClassificationService.Add(receivablesPayablesClassification);
+
+            await _context.SaveChangesAsync();
+
+            return receivablesPayablesClassification.Id.ToSuccessResponseWithModel();
+        }
+
+        public async Task<Response> DeleteReceivablesPayablesClassification(int id)
+        {
+            var receivablesPayablesClassificationEntity = await _receivablesPayablesClassificationService.Get(id);
+
+            _receivablesPayablesClassificationService.Delete(receivablesPayablesClassificationEntity);
+
+            await _context.SaveChangesAsync();
+
+            return ResponseAction.ToSuccessResponse();
+        }
+    }
+
+}
