@@ -13,9 +13,7 @@ public partial class AccountClassification
 
     public bool? IsActive { get; set; }
 
-    public virtual ICollection<Account> AccountAccountClassifications { get; set; } = new List<Account>();
-
-    public virtual ICollection<Account> AccountSubAccountClassifications { get; set; } = new List<Account>();
+    public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 
     public virtual ICollection<SubAccountClassification> SubAccountClassifications { get; set; } = new List<SubAccountClassification>();
 }

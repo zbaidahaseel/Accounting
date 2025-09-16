@@ -3,6 +3,7 @@ using Accounting_Business.Mappings;
 using Accounting_Business.Persistence.Entities;
 using Accounting_Business.Persistence.Models;
 using Accounting_Business.Services;
+using AutoMapper;
 
 namespace Accounting_Business.Managers
 {
@@ -20,26 +21,36 @@ namespace Accounting_Business.Managers
         Task<Response> GetAllReceivablesPayablesClassifications();
         Task<Response> AddReceivablesPayablesClassification(ReceivablesPayablesClassificationModel ReceivablesPayablesClassificationModel);
         Task<Response> DeleteReceivablesPayablesClassification(int id);
+        Task<Response> AddAccount(AccountModel account);
+        Task<Response> UpdateAccount(AccountModel account);
+        Task<Response> GetAccountByNumber(string accountNumber);
+        Task<Response> GetAllAccounts();
     }
     public class MasterDataManager : IMasterDataManager
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
         private readonly ICityService _cityService;
         private readonly ICostCenterService _costCenterService;
         private readonly IAgentService _agentService;
         private readonly IReceivablesPayablesClassificationService _receivablesPayablesClassificationService;
+        private readonly IAccountService _accountService;
 
         public MasterDataManager(AppDbContext context,
+            IMapper mapper,
             ICityService cityService,
             ICostCenterService costCenterService,
             IAgentService agentService,
-            IReceivablesPayablesClassificationService receivablesPayablesClassificationService)
+            IReceivablesPayablesClassificationService receivablesPayablesClassificationService,
+            IAccountService accountService)
         {
             _context = context;
+            _mapper = mapper;
             _cityService = cityService;
             _costCenterService = costCenterService;
             _agentService = agentService;
             _receivablesPayablesClassificationService = receivablesPayablesClassificationService;
+            _accountService = accountService;
         }
 
         public async Task<Response> GetAllCities()
@@ -152,6 +163,52 @@ namespace Accounting_Business.Managers
             await _context.SaveChangesAsync();
 
             return ResponseAction.ToSuccessResponse();
+        }
+
+        public async Task<Response> AddAccount(AccountModel account)
+        {
+            var entity = account.ToEntity(_mapper);
+          
+            _accountService.Add(entity);
+            
+            await _context.SaveChangesAsync();
+            
+            return entity.AccountNumber.ToSuccessResponseWithModel();
+        }
+        public async Task<Response> UpdateAccount(AccountModel account)
+        {
+            var entity = await _accountService.Get(account.AccountNumber);
+            //if (entity == null)
+            //{
+            //    return ResponseAction.ToNotFoundResponse($"Account with id {account.Id} not found.");
+            //}
+            entity = account.ToEntity(_mapper);
+
+            _accountService.Update(entity);
+
+            await _context.SaveChangesAsync();
+
+            return ResponseAction.ToSuccessResponse();
+        }
+
+        public async Task<Response> GetAccountByNumber(string accountNumber)
+        {
+            var account = await _accountService.Get(accountNumber);
+            //if (account == null)
+            //{
+            //    return ResponseAction.ToNotFoundResponse($"Account with number {accountNumber} not found.");
+            //}
+            var resource = account.ToResource(_mapper);
+
+            return resource.ToSuccessResponseWithModel();
+        }
+        public async Task<Response> GetAllAccounts()
+        {
+            var accounts = await _accountService.GetAll();
+           
+            var resource = accounts.Select(item => item.ToParentResources()).ToList();
+            
+            return resource.ToSuccessResponseWithModel();
         }
     }
 

@@ -86,5 +86,29 @@ namespace Accounting_Api.Controllers
             var result = await _masterDataManager.DeleteReceivablesPayablesClassification(id);
             return Ok(result);
         }
+
+        public async Task<IActionResult> AddAccount(AccountModel accountModel)
+        {
+            var result = await _masterDataManager.AddAccount(accountModel);
+            return Ok(result);
+        }
+
+        public async Task<IActionResult> UpdateAccount(AccountModel accountModel)
+        {
+            var result = await _masterDataManager.UpdateAccount(accountModel);
+            return Ok(result);
+        }
+
+        public async Task<IActionResult> GetAccountByNumber(string id)
+        {
+            var result = await _masterDataManager.GetAccountByNumber(id);
+            return Ok(result);
+        }
+
+        public async Task<IActionResult> GetAllAccounts()
+        {
+            var result = await _masterDataManager.GetAllAccounts();
+            return Ok(result);
+        }
     }
 }

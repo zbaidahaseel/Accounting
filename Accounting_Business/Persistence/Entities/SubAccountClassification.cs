@@ -11,9 +11,11 @@ public partial class SubAccountClassification
 
     public string Name { get; set; }
 
-    public bool IsActive { get; set; }
+    public bool? IsActive { get; set; }
 
     public int AccountClassificationId { get; set; }
 
     public virtual AccountClassification AccountClassification { get; set; }
+
+    public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 }
