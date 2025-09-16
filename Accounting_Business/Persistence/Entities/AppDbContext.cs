@@ -33,13 +33,13 @@ public partial class AppDbContext : DbContext
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.Number).HasName("PK__accounts__FD291E40DC0A274C");
+            entity.HasKey(e => e.AccountNumber).HasName("PK__accounts__FD291E40DC0A274C");
 
             entity.ToTable("accounts");
 
-            entity.Property(e => e.Number)
-                .ValueGeneratedNever()
-                .HasColumnName("number");
+            entity.Property(e => e.AccountNumber)
+                .HasMaxLength(50)
+                .HasColumnName("account_number");
             entity.Property(e => e.AccountClassificationId).HasColumnName("account_classification_id");
             entity.Property(e => e.BudgetItem).HasColumnName("budget_item");
             entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
@@ -56,10 +56,12 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .HasColumnName("name");
-            entity.Property(e => e.ParentAccountNumber).HasColumnName("parent_account_number");
+            entity.Property(e => e.ParentAccountNumber)
+                .HasMaxLength(50)
+                .HasColumnName("parent_account_number");
             entity.Property(e => e.SubAccountClassificationId).HasColumnName("sub_account_classification_id");
 
-            entity.HasOne(d => d.AccountClassification).WithMany(p => p.AccountAccountClassifications)
+            entity.HasOne(d => d.AccountClassification).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.AccountClassificationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__accounts__ACCOUN__3A81B327");
@@ -69,7 +71,11 @@ public partial class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_accounts_currency");
 
-            entity.HasOne(d => d.SubAccountClassification).WithMany(p => p.AccountSubAccountClassifications)
+            entity.HasOne(d => d.ParentAccountNumberNavigation).WithMany(p => p.InverseParentAccountNumberNavigation)
+                .HasForeignKey(d => d.ParentAccountNumber)
+                .HasConstraintName("FK_accounts_parent_accounts");
+
+            entity.HasOne(d => d.SubAccountClassification).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.SubAccountClassificationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__accounts__SUB_AC__3B75D760");
@@ -92,7 +98,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50)
-                .IsUnicode(false)
                 .HasColumnName("NAME");
         });
 
@@ -189,10 +194,12 @@ public partial class AppDbContext : DbContext
             entity.ToTable("sub_account_classifications");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValue(1)
+                .HasAnnotation("Relational:DefaultConstraintName", "DF_sub_account_classifications_id")
                 .HasColumnName("id");
             entity.Property(e => e.AccountClassificationId).HasColumnName("account_classification_id");
             entity.Property(e => e.IsActive)
+                .HasDefaultValue(true)
                 .HasAnnotation("Relational:DefaultConstraintName", "DF__sub_accou__is_ac__48CFD27E")
                 .HasColumnName("is_active");
             entity.Property(e => e.Name)

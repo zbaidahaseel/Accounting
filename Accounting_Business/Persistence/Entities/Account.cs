@@ -7,7 +7,7 @@ namespace Accounting_Business.Persistence.Entities;
 
 public partial class Account
 {
-    public int Number { get; set; }
+    public string AccountNumber { get; set; }
 
     public string Name { get; set; }
 
@@ -15,7 +15,7 @@ public partial class Account
 
     public int CurrencyId { get; set; }
 
-    public int? ParentAccountNumber { get; set; }
+    public string ParentAccountNumber { get; set; }
 
     public int AccountClassificationId { get; set; }
 
@@ -31,5 +31,9 @@ public partial class Account
 
     public virtual Currency Currency { get; set; }
 
-    public virtual AccountClassification SubAccountClassification { get; set; }
+    public virtual ICollection<Account> InverseParentAccountNumberNavigation { get; set; } = new List<Account>();
+
+    public virtual Account ParentAccountNumberNavigation { get; set; }
+
+    public virtual SubAccountClassification SubAccountClassification { get; set; }
 }
