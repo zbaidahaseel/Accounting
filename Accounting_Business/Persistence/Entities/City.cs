@@ -12,4 +12,6 @@ public partial class City
     public string Name { get; set; }
 
     public bool? IsActive { get; set; }
+
+    public virtual ICollection<Profile> Profiles { get; set; } = new List<Profile>();
 }
