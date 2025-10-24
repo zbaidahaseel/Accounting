@@ -9,9 +9,9 @@ public partial class AdditionalInformation
 {
     public int Id { get; set; }
 
-    public string ProfileCode { get; set; }
+    public int ProfileId { get; set; }
 
     public string Name { get; set; }
 
-    public virtual Profile ProfileCodeNavigation { get; set; }
+    public virtual Profile Profile { get; set; }
 }

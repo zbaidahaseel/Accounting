@@ -12,6 +12,12 @@ namespace Accounting_Business.Mappings
             CreateMap<Account, AccountResource>();
             CreateMap<Account, ChartOfAccountResource>();
             CreateMap<ProfileModel, Persistence.Entities.Profile>();
+            CreateMap<AdditionalInformationModel, AdditionalInformation>();
+            CreateMap<SubAccountModel, ProfileSubAccount>();
+            CreateMap<EmployeeModel, Employee>();
+            CreateMap<Employee, EmployeeResource>();
+            CreateMap<Profile,  ProfileResource>(); 
+            CreateMap<Employee, EmployeeResource>();
         }
     }
 }

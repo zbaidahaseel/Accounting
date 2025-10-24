@@ -38,8 +38,8 @@ namespace Accounting_Business.Services
                         .Include(q => q.Currency)
                         .Include(q => q.AccountClassification)
                         .Include(q => q.SubAccountClassification)
-                        .Include(q => q.InverseParentAccountNumberNavigation)
-                        .Include(q => q.ParentAccountNumberNavigation)
+                        .Include(q => q.InverseParentAccount)
+                        .Include(q => q.ParentAccount)
                         .FirstOrDefaultAsync();
             ;
             // if (accounts == null) { throw new NotFo}
@@ -61,7 +61,9 @@ namespace Accounting_Business.Services
 
         public async Task<List<Account>> GetChartOfAccounts(AccountFilterModel accountFilterModel)
         {
-            var query = _context.Accounts.AsQueryable();
+            var query = _context.Accounts
+                .Include(e => e.ParentAccount)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(accountFilterModel.AccountNumber))
                 query = query.Where(a => a.AccountNumber == accountFilterModel.AccountNumber);
@@ -73,7 +75,7 @@ namespace Accounting_Business.Services
                 query = query.Where(a => a.Level == accountFilterModel.Level.Value);
 
             if (!string.IsNullOrWhiteSpace(accountFilterModel.ParentAccountNumber))
-                query = query.Where(a => a.ParentAccountNumber == accountFilterModel.ParentAccountNumber);
+                query = query.Where(a => a.ParentAccount.AccountNumber == accountFilterModel.ParentAccountNumber);
 
             if (accountFilterModel.AccountClassification.HasValue)
                 query = query.Where(a => a.AccountClassificationId == accountFilterModel.AccountClassification.Value);
@@ -83,7 +85,7 @@ namespace Accounting_Business.Services
 
             return await query
                 .Include(q => q.AccountClassification)
-                .Include(q => q.ParentAccountNumberNavigation)
+                .Include(q => q.ParentAccount)
                 .ToListAsync();
         }
         

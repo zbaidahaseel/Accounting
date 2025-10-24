@@ -9,7 +9,7 @@ namespace Accounting_Api.Controllers
     public class MasterDataController : ControllerBase
     {
         private readonly IMasterDataManager _masterDataManager;
-
+        
         public MasterDataController(IMasterDataManager masterDataManager)
         {
             _masterDataManager = masterDataManager;

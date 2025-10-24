@@ -7,6 +7,8 @@ namespace Accounting_Business.Persistence.Entities;
 
 public partial class Profile
 {
+    public int Id { get; set; }
+
     public string ProfileCode { get; set; }
 
     public string Name { get; set; }
@@ -23,17 +25,17 @@ public partial class Profile
 
     public int? CityId { get; set; }
 
-    public int? PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; }
 
-    public int? MobileNumber { get; set; }
+    public string MobileNumber { get; set; }
 
-    public int? Fax { get; set; }
+    public string Fax { get; set; }
 
     public int? PriceCategory { get; set; }
 
-    public double? Discount { get; set; }
+    public decimal? Discount { get; set; }
 
-    public double? CreditLimit { get; set; }
+    public decimal? CreditLimit { get; set; }
 
     public int? AgentId { get; set; }
 
@@ -42,6 +44,8 @@ public partial class Profile
     public string Description { get; set; }
 
     public bool? IsActive { get; set; }
+
+    public int? ProfileTypeId { get; set; }
 
     public virtual ICollection<AdditionalInformation> AdditionalInformations { get; set; } = new List<AdditionalInformation>();
 

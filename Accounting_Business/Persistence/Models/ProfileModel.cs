@@ -2,7 +2,8 @@
 {
     public class ProfileModel
     {
-        public string ProfileNumber { get; set; }
+        public int? Id { get; set; }
+        public string ProfileCode { get; set; }
         public string? Name { get; set; }
         public string? EnglishName { get; set; }
         public string? IdentificationNumber { get; set; }

@@ -9,13 +9,19 @@ public partial class Currency
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
-
     public string IsoCode { get; set; }
 
-    public int? DecimalPlaces { get; set; }
+    public string Name { get; set; }
+
+    public string Unit { get; set; }
+
+    public decimal? NumberOfUnits { get; set; }
 
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
+
+    public virtual ICollection<ExchangeCurrency> ExchangeCurrencyBaseCurrencies { get; set; } = new List<ExchangeCurrency>();
+
+    public virtual ICollection<ExchangeCurrency> ExchangeCurrencyCurrencies { get; set; } = new List<ExchangeCurrency>();
 
     public virtual ICollection<Profile> Profiles { get; set; } = new List<Profile>();
 }
