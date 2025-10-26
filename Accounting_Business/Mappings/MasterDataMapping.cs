@@ -71,5 +71,15 @@ namespace Accounting_Business.Mappings
                 IsoCurrencyCode = entity.Currency?.IsoCode
             };
         }
+        public static ChartOfAccountResource ToChartOfAccountResource(this Account entity, IMapper mapper)
+        {
+            if (entity == null) return null;
+            var resource = mapper.Map<Account, ChartOfAccountResource>(entity);
+            resource.AccountName = entity.Name;
+            resource.AccountClassificationName = entity.AccountClassification?.Name;
+            resource.ParentAccountName = entity.ParentAccountNumberNavigation?.Name;
+            return resource;
+        }
+
     }
 }

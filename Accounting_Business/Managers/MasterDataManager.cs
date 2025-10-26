@@ -25,6 +25,7 @@ namespace Accounting_Business.Managers
         Task<Response> UpdateAccount(AccountModel account);
         Task<Response> GetAccountByNumber(string accountNumber);
         Task<Response> GetAllAccounts();
+        Task<Response> GetChartOfAccounts(AccountFilterModel accountFilterModel);
     }
     public class MasterDataManager : IMasterDataManager
     {
@@ -208,6 +209,15 @@ namespace Accounting_Business.Managers
            
             var resource = accounts.Select(item => item.ToParentResources()).ToList();
             
+            return resource.ToSuccessResponseWithModel();
+        }
+
+        public async Task<Response> GetChartOfAccounts(AccountFilterModel accountFilterModel)
+        {
+            var accounts = await _accountService.GetChartOfAccounts(accountFilterModel);
+           
+            var resource = accounts.Select(item => item.ToChartOfAccountResource(_mapper));
+
             return resource.ToSuccessResponseWithModel();
         }
     }

@@ -9,7 +9,7 @@
         public string? ParentAccountNumber { get; set; }
         public int AccountClassificationId { get; set; }
         public int SubAccountClassificationId { get; set; }
-        public int BudgetItem { get; set; }
+        public int? BudgetItem { get; set; }
         public int Level { get; set; }
         public bool? IsActive { get; set; }
     }

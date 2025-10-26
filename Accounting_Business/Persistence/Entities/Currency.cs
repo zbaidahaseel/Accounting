@@ -16,4 +16,6 @@ public partial class Currency
     public int? DecimalPlaces { get; set; }
 
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
+
+    public virtual ICollection<Profile> Profiles { get; set; } = new List<Profile>();
 }

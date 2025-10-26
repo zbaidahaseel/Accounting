@@ -5,13 +5,11 @@ using System.Collections.Generic;
 
 namespace Accounting_Business.Persistence.Entities;
 
-public partial class Agent
+public partial class ProfileClassfication
 {
     public int Id { get; set; }
 
     public string Name { get; set; }
-
-    public bool? IsActive { get; set; }
 
     public virtual ICollection<Profile> Profiles { get; set; } = new List<Profile>();
 }

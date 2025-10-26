@@ -110,5 +110,11 @@ namespace Accounting_Api.Controllers
             var result = await _masterDataManager.GetAllAccounts();
             return Ok(result);
         }
+
+        public async Task<IActionResult> ChartOfAccounts([FromQuery] AccountFilterModel accountFilterModel)
+        {
+            var result = await _masterDataManager.GetChartOfAccounts(accountFilterModel);
+            return Ok(result);
+        }
     }
 }

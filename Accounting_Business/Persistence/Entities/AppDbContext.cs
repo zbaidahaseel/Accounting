@@ -17,6 +17,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<AccountClassification> AccountClassifications { get; set; }
 
+    public virtual DbSet<AdditionalInformation> AdditionalInformations { get; set; }
+
     public virtual DbSet<Agent> Agents { get; set; }
 
     public virtual DbSet<City> Cities { get; set; }
@@ -24,6 +26,14 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<CostCenter> CostCenters { get; set; }
 
     public virtual DbSet<Currency> Currencies { get; set; }
+
+    public virtual DbSet<PriceCategory> PriceCategories { get; set; }
+
+    public virtual DbSet<Profile> Profiles { get; set; }
+
+    public virtual DbSet<ProfileClassfication> ProfileClassfications { get; set; }
+
+    public virtual DbSet<ProfileSubAccount> ProfileSubAccounts { get; set; }
 
     public virtual DbSet<ReceivablesPayablesClassification> ReceivablesPayablesClassifications { get; set; }
 
@@ -90,15 +100,37 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValue(1)
                 .HasAnnotation("Relational:DefaultConstraintName", "DF_account_classifications_ID")
-                .HasColumnName("ID");
+                .HasColumnName("id");
             entity.Property(e => e.IsActive)
                 .HasDefaultValue(false)
                 .HasAnnotation("Relational:DefaultConstraintName", "DF__account_c__IS_AC__37A5467C")
-                .HasColumnName("IS_ACTIVE");
+                .HasColumnName("is_active");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50)
-                .HasColumnName("NAME");
+                .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<AdditionalInformation>(entity =>
+        {
+            entity.ToTable("additional_informations");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("name");
+            entity.Property(e => e.ProfileCode)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("profile_code");
+
+            entity.HasOne(d => d.ProfileCodeNavigation).WithMany(p => p.AdditionalInformations)
+                .HasForeignKey(d => d.ProfileCode)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_profile_additional_information");
         });
 
         modelBuilder.Entity<Agent>(entity =>
@@ -170,6 +202,118 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<PriceCategory>(entity =>
+        {
+            entity.ToTable("price_categories");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(10)
+                .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<Profile>(entity =>
+        {
+            entity.HasKey(e => e.ProfileCode);
+
+            entity.ToTable("profiles");
+
+            entity.Property(e => e.ProfileCode)
+                .HasMaxLength(50)
+                .HasColumnName("profile_code");
+            entity.Property(e => e.Address)
+                .HasMaxLength(50)
+                .HasColumnName("address");
+            entity.Property(e => e.AgentId).HasColumnName("agent_id");
+            entity.Property(e => e.CityId).HasColumnName("city_id");
+            entity.Property(e => e.ClassificationId).HasColumnName("classification_id");
+            entity.Property(e => e.CreditLimit).HasColumnName("credit_limit");
+            entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
+            entity.Property(e => e.Description)
+                .HasMaxLength(50)
+                .HasColumnName("description");
+            entity.Property(e => e.Discount).HasColumnName("discount");
+            entity.Property(e => e.Email)
+                .HasMaxLength(50)
+                .HasColumnName("email");
+            entity.Property(e => e.EnglishName)
+                .HasMaxLength(50)
+                .HasColumnName("english_name");
+            entity.Property(e => e.Fax).HasColumnName("fax");
+            entity.Property(e => e.IdentificationNumber)
+                .HasMaxLength(50)
+                .HasColumnName("identification_number");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(true)
+                .HasAnnotation("Relational:DefaultConstraintName", "DF_profiles_is_active")
+                .HasColumnName("is_active");
+            entity.Property(e => e.MobileNumber).HasColumnName("mobile_number");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
+            entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
+            entity.Property(e => e.PriceCategory).HasColumnName("price_category");
+
+            entity.HasOne(d => d.Agent).WithMany(p => p.Profiles)
+                .HasForeignKey(d => d.AgentId)
+                .HasConstraintName("FK_profiles_agents");
+
+            entity.HasOne(d => d.City).WithMany(p => p.Profiles)
+                .HasForeignKey(d => d.CityId)
+                .HasConstraintName("FK_profiles_cities");
+
+            entity.HasOne(d => d.Classification).WithMany(p => p.Profiles)
+                .HasForeignKey(d => d.ClassificationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_profiles_classifications");
+
+            entity.HasOne(d => d.Currency).WithMany(p => p.Profiles)
+                .HasForeignKey(d => d.CurrencyId)
+                .HasConstraintName("FK_profiles_currencies");
+
+            entity.HasOne(d => d.PriceCategoryNavigation).WithMany(p => p.Profiles)
+                .HasForeignKey(d => d.PriceCategory)
+                .HasConstraintName("FK_profiles_price_categories");
+        });
+
+        modelBuilder.Entity<ProfileClassfication>(entity =>
+        {
+            entity.ToTable("profile_classfications");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(10)
+                .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<ProfileSubAccount>(entity =>
+        {
+            entity.ToTable("profile_sub_accounts");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("name");
+            entity.Property(e => e.ProfileCode)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("profile_code");
+
+            entity.HasOne(d => d.ProfileCodeNavigation).WithMany(p => p.ProfileSubAccounts)
+                .HasForeignKey(d => d.ProfileCode)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_profile_sub_accounts");
         });
 
         modelBuilder.Entity<ReceivablesPayablesClassification>(entity =>

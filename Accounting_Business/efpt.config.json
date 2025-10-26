@@ -24,6 +24,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[additional_informations]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[agents]",
          "ObjectType": 0
       },
@@ -37,6 +41,22 @@
       },
       {
          "Name": "[dbo].[currencies]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[price_categories]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[profile_classfications]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[profile_sub_accounts]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[profiles]",
          "ObjectType": 0
       },
       {
