@@ -13,5 +13,7 @@ public partial class City
 
     public bool? IsActive { get; set; }
 
+    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
+
     public virtual ICollection<Profile> Profiles { get; set; } = new List<Profile>();
 }

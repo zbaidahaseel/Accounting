@@ -1,4 +1,5 @@
 ﻿using Accounting_Business.Persistence.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Accounting_Business.Services
 {
@@ -29,7 +30,14 @@ namespace Accounting_Business.Services
 
         public async Task<Profile> Get(string profileCode)
         {
-           return await _context.Profiles.FindAsync(profileCode);
+           return await _context.Profiles
+                .Include(e => e.AdditionalInformations)
+                .Include(e => e.ProfileSubAccounts)
+                .Include(e => e.Currency)
+                .Include(e => e.Classification)
+                .Include(e => e.City)
+                .Include(e => e.Agent)
+                .SingleOrDefaultAsync(e => e.ProfileCode == profileCode);
         }
 
         public void Delete(Profile profile)

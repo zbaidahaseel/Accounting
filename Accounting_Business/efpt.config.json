@@ -44,6 +44,22 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[employees]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[exchange_currencies]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[genders]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[marital_statuses]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[price_categories]",
          "ObjectType": 0
       },

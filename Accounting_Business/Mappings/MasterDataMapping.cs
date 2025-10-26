@@ -77,7 +77,7 @@ namespace Accounting_Business.Mappings
             var resource = mapper.Map<Account, ChartOfAccountResource>(entity);
             resource.AccountName = entity.Name;
             resource.AccountClassificationName = entity.AccountClassification?.Name;
-            resource.ParentAccountName = entity.ParentAccountNumberNavigation?.Name;
+            resource.ParentAccountName = entity.ParentAccount?.Name;
             return resource;
         }
 

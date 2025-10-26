@@ -27,6 +27,14 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Currency> Currencies { get; set; }
 
+    public virtual DbSet<Employee> Employees { get; set; }
+
+    public virtual DbSet<ExchangeCurrency> ExchangeCurrencies { get; set; }
+
+    public virtual DbSet<Gender> Genders { get; set; }
+
+    public virtual DbSet<MaritalStatus> MaritalStatuses { get; set; }
+
     public virtual DbSet<PriceCategory> PriceCategories { get; set; }
 
     public virtual DbSet<Profile> Profiles { get; set; }
@@ -43,14 +51,16 @@ public partial class AppDbContext : DbContext
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.AccountNumber).HasName("PK__accounts__FD291E40DC0A274C");
+            entity.HasKey(e => e.Id).HasName("PK__accounts__FD291E40DC0A274C");
 
             entity.ToTable("accounts");
 
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AccountClassificationId).HasColumnName("account_classification_id");
             entity.Property(e => e.AccountNumber)
+                .IsRequired()
                 .HasMaxLength(50)
                 .HasColumnName("account_number");
-            entity.Property(e => e.AccountClassificationId).HasColumnName("account_classification_id");
             entity.Property(e => e.BudgetItem).HasColumnName("budget_item");
             entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
             entity.Property(e => e.EnglishName)
@@ -66,9 +76,7 @@ public partial class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .HasColumnName("name");
-            entity.Property(e => e.ParentAccountNumber)
-                .HasMaxLength(50)
-                .HasColumnName("parent_account_number");
+            entity.Property(e => e.ParentAccountId).HasColumnName("parent_account_id");
             entity.Property(e => e.SubAccountClassificationId).HasColumnName("sub_account_classification_id");
 
             entity.HasOne(d => d.AccountClassification).WithMany(p => p.Accounts)
@@ -79,11 +87,11 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.Currency).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.CurrencyId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_accounts_currency");
+                .HasConstraintName("FK_accounts_curr");
 
-            entity.HasOne(d => d.ParentAccountNumberNavigation).WithMany(p => p.InverseParentAccountNumberNavigation)
-                .HasForeignKey(d => d.ParentAccountNumber)
-                .HasConstraintName("FK_accounts_parent_accounts");
+            entity.HasOne(d => d.ParentAccount).WithMany(p => p.InverseParentAccount)
+                .HasForeignKey(d => d.ParentAccountId)
+                .HasConstraintName("FK_accounts_accounts2");
 
             entity.HasOne(d => d.SubAccountClassification).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.SubAccountClassificationId)
@@ -115,22 +123,17 @@ public partial class AppDbContext : DbContext
         {
             entity.ToTable("additional_informations");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50)
                 .HasColumnName("name");
-            entity.Property(e => e.ProfileCode)
-                .IsRequired()
-                .HasMaxLength(50)
-                .HasColumnName("profile_code");
+            entity.Property(e => e.ProfileId).HasColumnName("profile_id");
 
-            entity.HasOne(d => d.ProfileCodeNavigation).WithMany(p => p.AdditionalInformations)
-                .HasForeignKey(d => d.ProfileCode)
+            entity.HasOne(d => d.Profile).WithMany(p => p.AdditionalInformations)
+                .HasForeignKey(d => d.ProfileId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_profile_additional_information");
+                .HasConstraintName("FK_additional_informations_profiles");
         });
 
         modelBuilder.Entity<Agent>(entity =>
@@ -186,18 +189,132 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Currency>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__currenci__3213E83F3F7D9F0E");
-
             entity.ToTable("currencies");
+
+            entity.HasIndex(e => e.IsoCode, "iso_code_currencies").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IsoCode)
+                .IsRequired()
+                .HasMaxLength(3)
+                .HasColumnName("iso_code");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("name");
+            entity.Property(e => e.NumberOfUnits)
+                .HasColumnType("decimal(9, 2)")
+                .HasColumnName("number_of_units");
+            entity.Property(e => e.Unit)
+                .HasMaxLength(50)
+                .HasColumnName("unit");
+        });
+
+        modelBuilder.Entity<Employee>(entity =>
+        {
+            entity.ToTable("employees");
+
+            entity.HasIndex(e => e.EmployeeCode, "CODE_employees").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Address)
+                .HasMaxLength(50)
+                .HasColumnName("address");
+            entity.Property(e => e.BirthDate).HasColumnName("birth_date");
+            entity.Property(e => e.CityId).HasColumnName("city_id");
+            entity.Property(e => e.ClassificationId).HasColumnName("classification_id");
+            entity.Property(e => e.CreditLimit).HasColumnName("credit_limit");
+            entity.Property(e => e.EmployeeCode)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("employee_code");
+            entity.Property(e => e.EmployeeImagePath)
+                .HasMaxLength(1000)
+                .HasColumnName("employee_image_path");
+            entity.Property(e => e.EndOfServiceDate).HasColumnName("end_of_service_date");
+            entity.Property(e => e.FirstPhoneNumber)
+                .HasMaxLength(20)
+                .HasColumnName("first_phone_number");
+            entity.Property(e => e.GenderId).HasColumnName("gender_id");
+            entity.Property(e => e.HiringDate).HasColumnName("hiring_date");
+            entity.Property(e => e.IdentificationNumber)
+                .HasMaxLength(20)
+                .HasColumnName("identification_number");
+            entity.Property(e => e.MaritalStatusId).HasColumnName("marital_status_id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
+            entity.Property(e => e.NumberOfChildren).HasColumnName("number_of_children");
+            entity.Property(e => e.SecondPhoneNumber)
+                .HasMaxLength(20)
+                .HasColumnName("second_phone_number");
+
+            entity.HasOne(d => d.City).WithMany(p => p.Employees)
+                .HasForeignKey(d => d.CityId)
+                .HasConstraintName("FK_employees_cities");
+
+            entity.HasOne(d => d.Classification).WithMany(p => p.Employees)
+                .HasForeignKey(d => d.ClassificationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_employees_classifications");
+
+            entity.HasOne(d => d.Gender).WithMany(p => p.Employees)
+                .HasForeignKey(d => d.GenderId)
+                .HasConstraintName("FK_employees_genders");
+
+            entity.HasOne(d => d.MaritalStatus).WithMany(p => p.Employees)
+                .HasForeignKey(d => d.MaritalStatusId)
+                .HasConstraintName("FK_employees_marital_statuses");
+        });
+
+        modelBuilder.Entity<ExchangeCurrency>(entity =>
+        {
+            entity.ToTable("exchange_currencies");
+
+            entity.HasIndex(e => new { e.CurrencyId, e.BaseCurrencyId, e.EffectiveDate }, "IX_exchange_currencies").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BaseCurrencyId).HasColumnName("base_currency_id");
+            entity.Property(e => e.BuyPrice)
+                .HasColumnType("decimal(18, 7)")
+                .HasColumnName("buy_price");
+            entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
+            entity.Property(e => e.EffectiveDate).HasColumnName("effective_date");
+            entity.Property(e => e.SellPrice)
+                .HasColumnType("decimal(18, 7)")
+                .HasColumnName("sell_price");
+
+            entity.HasOne(d => d.BaseCurrency).WithMany(p => p.ExchangeCurrencyBaseCurrencies)
+                .HasForeignKey(d => d.BaseCurrencyId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_base_currency");
+
+            entity.HasOne(d => d.Currency).WithMany(p => p.ExchangeCurrencyCurrencies)
+                .HasForeignKey(d => d.CurrencyId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_currency");
+        });
+
+        modelBuilder.Entity<Gender>(entity =>
+        {
+            entity.ToTable("genders");
 
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-            entity.Property(e => e.DecimalPlaces).HasColumnName("decimal_places");
-            entity.Property(e => e.IsoCode)
+            entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50)
-                .HasColumnName("iso_code");
+                .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<MaritalStatus>(entity =>
+        {
+            entity.ToTable("marital_statuses");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50)
@@ -219,32 +336,38 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Profile>(entity =>
         {
-            entity.HasKey(e => e.ProfileCode);
-
             entity.ToTable("profiles");
 
-            entity.Property(e => e.ProfileCode)
-                .HasMaxLength(50)
-                .HasColumnName("profile_code");
+            entity.HasIndex(e => e.ProfileCode, "CODE_profiles").IsUnique();
+
+            entity.HasIndex(e => e.AgentId, "agent_profiles");
+
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Address)
                 .HasMaxLength(50)
                 .HasColumnName("address");
             entity.Property(e => e.AgentId).HasColumnName("agent_id");
             entity.Property(e => e.CityId).HasColumnName("city_id");
             entity.Property(e => e.ClassificationId).HasColumnName("classification_id");
-            entity.Property(e => e.CreditLimit).HasColumnName("credit_limit");
+            entity.Property(e => e.CreditLimit)
+                .HasColumnType("decimal(9, 2)")
+                .HasColumnName("credit_limit");
             entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
             entity.Property(e => e.Description)
-                .HasMaxLength(50)
+                .HasMaxLength(255)
                 .HasColumnName("description");
-            entity.Property(e => e.Discount).HasColumnName("discount");
+            entity.Property(e => e.Discount)
+                .HasColumnType("decimal(9, 2)")
+                .HasColumnName("discount");
             entity.Property(e => e.Email)
-                .HasMaxLength(50)
+                .HasMaxLength(255)
                 .HasColumnName("email");
             entity.Property(e => e.EnglishName)
                 .HasMaxLength(50)
                 .HasColumnName("english_name");
-            entity.Property(e => e.Fax).HasColumnName("fax");
+            entity.Property(e => e.Fax)
+                .HasMaxLength(20)
+                .HasColumnName("fax");
             entity.Property(e => e.IdentificationNumber)
                 .HasMaxLength(50)
                 .HasColumnName("identification_number");
@@ -252,12 +375,21 @@ public partial class AppDbContext : DbContext
                 .HasDefaultValue(true)
                 .HasAnnotation("Relational:DefaultConstraintName", "DF_profiles_is_active")
                 .HasColumnName("is_active");
-            entity.Property(e => e.MobileNumber).HasColumnName("mobile_number");
+            entity.Property(e => e.MobileNumber)
+                .HasMaxLength(20)
+                .HasColumnName("mobile_number");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
-            entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
+            entity.Property(e => e.PhoneNumber)
+                .HasMaxLength(20)
+                .HasColumnName("phone_number");
             entity.Property(e => e.PriceCategory).HasColumnName("price_category");
+            entity.Property(e => e.ProfileCode)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("profile_code");
+            entity.Property(e => e.ProfileTypeId).HasColumnName("profile_type_id");
 
             entity.HasOne(d => d.Agent).WithMany(p => p.Profiles)
                 .HasForeignKey(d => d.AgentId)
@@ -285,9 +417,7 @@ public partial class AppDbContext : DbContext
         {
             entity.ToTable("profile_classfications");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(10)
@@ -298,22 +428,17 @@ public partial class AppDbContext : DbContext
         {
             entity.ToTable("profile_sub_accounts");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50)
                 .HasColumnName("name");
-            entity.Property(e => e.ProfileCode)
-                .IsRequired()
-                .HasMaxLength(50)
-                .HasColumnName("profile_code");
+            entity.Property(e => e.ProfileId).HasColumnName("profile_id");
 
-            entity.HasOne(d => d.ProfileCodeNavigation).WithMany(p => p.ProfileSubAccounts)
-                .HasForeignKey(d => d.ProfileCode)
+            entity.HasOne(d => d.Profile).WithMany(p => p.ProfileSubAccounts)
+                .HasForeignKey(d => d.ProfileId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_profile_sub_accounts");
+                .HasConstraintName("FK_profile_sub_accounts_profiles");
         });
 
         modelBuilder.Entity<ReceivablesPayablesClassification>(entity =>

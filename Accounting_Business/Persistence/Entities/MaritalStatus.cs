@@ -5,13 +5,11 @@ using System.Collections.Generic;
 
 namespace Accounting_Business.Persistence.Entities;
 
-public partial class ProfileSubAccount
+public partial class MaritalStatus
 {
     public int Id { get; set; }
 
-    public int ProfileId { get; set; }
-
     public string Name { get; set; }
 
-    public virtual Profile Profile { get; set; }
+    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 }

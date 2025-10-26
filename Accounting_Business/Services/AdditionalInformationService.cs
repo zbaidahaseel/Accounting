@@ -1,4 +1,5 @@
 ﻿using Accounting_Business.Persistence.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Accounting_Business.Services
 {
@@ -7,7 +8,7 @@ namespace Accounting_Business.Services
         void Add(List<AdditionalInformation> additionalInformation);
         void Update(List<AdditionalInformation> additionalInformation);
         void Delete(List<AdditionalInformation> additionalInformation);
-        List<AdditionalInformation> GetAllByProfileCode(string profileCode);
+        Task<List<AdditionalInformation>> GetAllByProfileId(int profileId);
     }
     public class AdditionalInformationService : IAdditionalInformationService
     {
@@ -30,11 +31,11 @@ namespace Accounting_Business.Services
         {
             _context.AdditionalInformations.RemoveRange(additionalInformation);
         }
-        public List<AdditionalInformation> GetAllByProfileCode(string profileCode)
+        public async Task<List<AdditionalInformation>> GetAllByProfileId(int profileId)
         {
-            return _context.AdditionalInformations
-                .Where(e => e.ProfileCode == profileCode)
-                .ToList();
+            return await _context.AdditionalInformations
+                .Where(e => e.ProfileId == profileId)
+                .ToListAsync();
         }
     }
 }

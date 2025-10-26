@@ -15,5 +15,7 @@ public partial class AccountClassification
 
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 
+    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
+
     public virtual ICollection<SubAccountClassification> SubAccountClassifications { get; set; } = new List<SubAccountClassification>();
 }
