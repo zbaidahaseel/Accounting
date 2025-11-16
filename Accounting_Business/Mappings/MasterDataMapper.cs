@@ -22,6 +22,13 @@ namespace Accounting_Business.Mappings
             CreateMap<Currency, CurrencyResource>();                                       
             CreateMap<ExchangeCurrency, ExchangeCurrencyResource>();
             CreateMap<ExchangeCurrencyModel, ExchangeCurrency>();
+
+            #region
+            CreateMap<VoucherModel, Voucher>();
+            CreateMap<Voucher, VoucherResource>();
+            CreateMap<VoucherCheckModel, VoucherCheck>();
+            CreateMap<VoucherCheck, VoucherCheckResource>();
+            #endregion
         }
     }
 }

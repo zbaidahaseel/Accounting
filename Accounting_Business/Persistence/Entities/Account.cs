@@ -35,6 +35,8 @@ public partial class Account
 
     public virtual ICollection<Account> InverseParentAccount { get; set; } = new List<Account>();
 
+    public virtual ICollection<JournalVoucherCheck> JournalVoucherChecks { get; set; } = new List<JournalVoucherCheck>();
+
     public virtual Account ParentAccount { get; set; }
 
     public virtual SubAccountClassification SubAccountClassification { get; set; }
