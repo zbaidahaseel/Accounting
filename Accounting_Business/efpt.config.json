@@ -56,6 +56,14 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[journal_voucher_checks]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[journal_vouchers]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[marital_statuses]",
          "ObjectType": 0
       },
@@ -81,6 +89,14 @@
       },
       {
          "Name": "[dbo].[sub_account_classifications]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[voucher_checks]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[vouchers]",
          "ObjectType": 0
       }
    ],

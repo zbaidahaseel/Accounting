@@ -33,6 +33,10 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Gender> Genders { get; set; }
 
+    public virtual DbSet<JournalVoucher> JournalVouchers { get; set; }
+
+    public virtual DbSet<JournalVoucherCheck> JournalVoucherChecks { get; set; }
+
     public virtual DbSet<MaritalStatus> MaritalStatuses { get; set; }
 
     public virtual DbSet<PriceCategory> PriceCategories { get; set; }
@@ -46,6 +50,10 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<ReceivablesPayablesClassification> ReceivablesPayablesClassifications { get; set; }
 
     public virtual DbSet<SubAccountClassification> SubAccountClassifications { get; set; }
+
+    public virtual DbSet<Voucher> Vouchers { get; set; }
+
+    public virtual DbSet<VoucherCheck> VoucherChecks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -308,6 +316,71 @@ public partial class AppDbContext : DbContext
                 .HasColumnName("name");
         });
 
+        modelBuilder.Entity<JournalVoucher>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_journal_voucher");
+
+            entity.ToTable("journal_vouchers");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.AgentId).HasColumnName("agent_id");
+            entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
+            entity.Property(e => e.ExchangeRate)
+                .HasColumnType("decimal(18, 6)")
+                .HasColumnName("exchange_rate");
+            entity.Property(e => e.ReferenceNumber)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("reference_number");
+            entity.Property(e => e.TaxDueDate).HasColumnName("tax_due_date");
+            entity.Property(e => e.TaxPercentage)
+                .HasColumnType("decimal(18, 6)")
+                .HasColumnName("tax_percentage");
+            entity.Property(e => e.VoucherDate).HasColumnName("voucher_date");
+            entity.Property(e => e.VoucherTime).HasColumnName("voucher_time");
+        });
+
+        modelBuilder.Entity<JournalVoucherCheck>(entity =>
+        {
+            entity.ToTable("journal_voucher_checks");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.AccountName)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasColumnName("account_name");
+            entity.Property(e => e.CreditAmount)
+                .HasColumnType("decimal(18, 6)")
+                .HasColumnName("credit_amount");
+            entity.Property(e => e.DebitAmount)
+                .HasColumnType("decimal(18, 6)")
+                .HasColumnName("debit_amount");
+            entity.Property(e => e.Description)
+                .IsRequired()
+                .HasMaxLength(1000)
+                .HasColumnName("description");
+            entity.Property(e => e.SubAccount)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("sub_account");
+            entity.Property(e => e.VoucherId).HasColumnName("voucher_id");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.JournalVoucherChecks)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_journal_voucher_checks_accounts");
+
+            entity.HasOne(d => d.Voucher).WithMany(p => p.JournalVoucherChecks)
+                .HasForeignKey(d => d.VoucherId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_journal_voucher_checks_journal_vouchers");
+        });
+
         modelBuilder.Entity<MaritalStatus>(entity =>
         {
             entity.ToTable("marital_statuses");
@@ -479,6 +552,75 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.AccountClassification).WithMany(p => p.SubAccountClassifications)
                 .HasForeignKey(d => d.AccountClassificationId)
                 .HasConstraintName("FK_account_classification");
+        });
+
+        modelBuilder.Entity<Voucher>(entity =>
+        {
+            entity.ToTable("vouchers");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AccountFrom).HasColumnName("account_from");
+            entity.Property(e => e.AccountFromName)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("account_from_name");
+            entity.Property(e => e.AgentId).HasColumnName("agent_id");
+            entity.Property(e => e.AmountPayment)
+                .HasColumnType("decimal(18, 6)")
+                .HasColumnName("amount_payment");
+            entity.Property(e => e.CashAccountTo).HasColumnName("cash_account_to");
+            entity.Property(e => e.CashAmountPayment)
+                .HasColumnType("decimal(18, 6)")
+                .HasColumnName("cash_amount_payment");
+            entity.Property(e => e.CheckAccountTo).HasColumnName("check_account_to");
+            entity.Property(e => e.CheckAmountPayment)
+                .HasColumnType("decimal(18, 6)")
+                .HasColumnName("check_amount_payment");
+            entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
+            entity.Property(e => e.Description)
+                .IsRequired()
+                .HasMaxLength(1000)
+                .HasColumnName("description");
+            entity.Property(e => e.Discount)
+                .HasColumnType("decimal(18, 6)")
+                .HasColumnName("discount");
+            entity.Property(e => e.ExchangeRate)
+                .HasColumnType("decimal(18, 6)")
+                .HasColumnName("exchange_rate");
+            entity.Property(e => e.ReferenceNumber)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("reference_number");
+            entity.Property(e => e.SubAccount)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("sub_account");
+            entity.Property(e => e.TimeCreated).HasColumnName("time_created");
+            entity.Property(e => e.TotalAmount)
+                .HasColumnType("decimal(18, 6)")
+                .HasColumnName("total_amount");
+            entity.Property(e => e.VoucherDate).HasColumnName("voucher_date");
+            entity.Property(e => e.VoucherTypeId).HasColumnName("voucher_type_id");
+        });
+
+        modelBuilder.Entity<VoucherCheck>(entity =>
+        {
+            entity.ToTable("voucher_checks");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.Amount)
+                .HasColumnType("decimal(18, 6)")
+                .HasColumnName("amount");
+            entity.Property(e => e.BankId).HasColumnName("bank_id");
+            entity.Property(e => e.CheckNo).HasColumnName("check_no");
+            entity.Property(e => e.DueDate).HasColumnName("due_date");
+            entity.Property(e => e.VoucherId).HasColumnName("voucher_id");
+
+            entity.HasOne(d => d.Voucher).WithMany(p => p.VoucherChecks)
+                .HasForeignKey(d => d.VoucherId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_voucher_checks_vouchers");
         });
 
         OnModelCreatingPartial(modelBuilder);
