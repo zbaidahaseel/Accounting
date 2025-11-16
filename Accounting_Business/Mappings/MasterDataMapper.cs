@@ -18,6 +18,10 @@ namespace Accounting_Business.Mappings
             CreateMap<Employee, EmployeeResource>();
             CreateMap<Profile,  ProfileResource>(); 
             CreateMap<Employee, EmployeeResource>();
+            CreateMap<CurrencyModel, Currency>();
+            CreateMap<Currency, CurrencyResource>();                                       
+            CreateMap<ExchangeCurrency, ExchangeCurrencyResource>();
+            CreateMap<ExchangeCurrencyModel, ExchangeCurrency>();
         }
     }
 }
