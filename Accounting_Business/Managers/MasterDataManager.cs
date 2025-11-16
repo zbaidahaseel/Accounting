@@ -26,6 +26,13 @@ namespace Accounting_Business.Managers
         Task<Response> GetAccountByNumber(string accountNumber);
         Task<Response> GetAllAccounts();
         Task<Response> GetChartOfAccounts(AccountFilterModel accountFilterModel);
+        Task<Response> AddCurrency(CurrencyModel currencyModel);
+        Task<Response> UpdateCurrency(CurrencyModel currencyModel);
+        Task<Response> DeleteCurrency(int id);
+        Task<Response> GetAllCurrencies();
+        Task<Response> AddExchangeCurrency(ExchangeCurrencyModel currencyModel);
+        Task<Response> UpdateExchangeCurrency(ExchangeCurrencyModel currencyModel);
+        Task<Response> GetAllExchangeCurrencies();
     }
     public class MasterDataManager : IMasterDataManager
     {
@@ -36,6 +43,8 @@ namespace Accounting_Business.Managers
         private readonly IAgentService _agentService;
         private readonly IReceivablesPayablesClassificationService _receivablesPayablesClassificationService;
         private readonly IAccountService _accountService;
+        private readonly ICurrencyService _currencyService;
+        private readonly IExchangeCurrencyService _exchangeCurrencyService;
 
         public MasterDataManager(AppDbContext context,
             IMapper mapper,
@@ -43,7 +52,9 @@ namespace Accounting_Business.Managers
             ICostCenterService costCenterService,
             IAgentService agentService,
             IReceivablesPayablesClassificationService receivablesPayablesClassificationService,
-            IAccountService accountService)
+            IAccountService accountService,
+            ICurrencyService currencyService,
+            IExchangeCurrencyService exchangeCurrencyService)
         {
             _context = context;
             _mapper = mapper;
@@ -52,12 +63,14 @@ namespace Accounting_Business.Managers
             _agentService = agentService;
             _receivablesPayablesClassificationService = receivablesPayablesClassificationService;
             _accountService = accountService;
+            _currencyService = currencyService;
+            _exchangeCurrencyService = exchangeCurrencyService;
         }
 
         public async Task<Response> GetAllCities()
         {
             var cities = await _cityService.GetAllCities();
-            return cities.ToSuccessResponseWithModel();
+            return cities.Select(e => e.ToResource()).ToSuccessResponseWithModel();
         }
 
         public async Task<Response> AddCity(CityModel cityModel)
@@ -85,7 +98,7 @@ namespace Accounting_Business.Managers
         public async Task<Response> GetAllCostCenters()
         {
             var cities = await _costCenterService.GetAll();
-            return cities.ToSuccessResponseWithModel();
+            return cities.Select(e => e.ToResource()).ToSuccessResponseWithModel();
         }
 
         public async Task<Response> AddCostCenter(CostCenterModel costCenterModel)
@@ -113,7 +126,8 @@ namespace Accounting_Business.Managers
         public async Task<Response> GetAllAgents()
         {
             var cities = await _agentService.GetAll();
-            return cities.ToSuccessResponseWithModel();
+
+            return cities.Select(e => e.ToResource()).ToSuccessResponseWithModel();
         }
 
         public async Task<Response> AddAgent(AgentModel agentModel)
@@ -141,7 +155,7 @@ namespace Accounting_Business.Managers
         public async Task<Response> GetAllReceivablesPayablesClassifications()
         {
             var cities = await _receivablesPayablesClassificationService.GetAll();
-            return cities.ToSuccessResponseWithModel();
+            return cities.Select(e => e.ToResource()).ToSuccessResponseWithModel();
         }
 
         public async Task<Response> AddReceivablesPayablesClassification(ReceivablesPayablesClassificationModel ReceivablesPayablesClassificationModel)
@@ -176,6 +190,7 @@ namespace Accounting_Business.Managers
             
             return entity.AccountNumber.ToSuccessResponseWithModel();
         }
+       
         public async Task<Response> UpdateAccount(AccountModel account)
         {
             var entity = await _accountService.Get(account.AccountNumber);
@@ -203,6 +218,7 @@ namespace Accounting_Business.Managers
 
             return resource.ToSuccessResponseWithModel();
         }
+      
         public async Task<Response> GetAllAccounts()
         {
             var accounts = await _accountService.GetAll();
@@ -215,11 +231,89 @@ namespace Accounting_Business.Managers
         public async Task<Response> GetChartOfAccounts(AccountFilterModel accountFilterModel)
         {
             var accounts = await _accountService.GetChartOfAccounts(accountFilterModel);
-           
+
             var resource = accounts.Select(item => item.ToChartOfAccountResource(_mapper));
 
             return resource.ToSuccessResponseWithModel();
         }
+
+        public async Task<Response> AddCurrency(CurrencyModel currencyModel)
+        {
+            var entity = currencyModel.ToEntity(_mapper);
+
+            _currencyService.Add(entity);
+
+            await _context.SaveChangesAsync();
+
+            return entity.Id.ToSuccessResponseWithModel();
+        }
+
+        public async Task<Response> UpdateCurrency(CurrencyModel currencyModel)
+        {
+            var entity = currencyModel.ToEntity(_mapper);
+
+            _currencyService.Update(entity);
+
+            await _context.SaveChangesAsync();
+
+            return ResponseAction.ToSuccessResponse();
+        }
+
+        public async Task<Response> DeleteCurrency(int id)
+        {
+            var currency = await _currencyService.Get(id);
+
+            _currencyService.Delete(currency);
+
+            await _context.SaveChangesAsync();
+
+            return ResponseAction.ToSuccessResponse();
+        }
+
+        public async Task<Response> GetAllCurrencies()
+        {
+            var currencies = await _currencyService.GetAll();
+
+            var currencyResources = currencies.Select(c => c.ToResource(_mapper)).ToList();
+
+            await _context.SaveChangesAsync();
+
+            return currencyResources.ToSuccessResponseWithModel();
+        }
+
+        public async Task<Response> AddExchangeCurrency(ExchangeCurrencyModel currencyModel)
+        {
+            var entity = currencyModel.ToEntity(_mapper);
+
+            _exchangeCurrencyService.Add(entity);
+
+            await _context.SaveChangesAsync();
+
+            return entity.Id.ToSuccessResponseWithModel();
+        }
+
+        public async Task<Response> UpdateExchangeCurrency(ExchangeCurrencyModel currencyModel)
+        {
+            var entity = currencyModel.ToEntity(_mapper);
+
+            _exchangeCurrencyService.Update(entity);
+
+            await _context.SaveChangesAsync();
+
+            return ResponseAction.ToSuccessResponse();
+        }
+
+        public async Task<Response> GetAllExchangeCurrencies()
+        {
+            var currencies = await _exchangeCurrencyService.GetAll();
+
+            var currencyResources = currencies.Select(c => c.ToResource(_mapper)).ToList();
+
+            await _context.SaveChangesAsync();
+
+            return currencyResources.ToSuccessResponseWithModel();
+        }
+
     }
 
 }

@@ -2,7 +2,6 @@
 using Accounting_Business.Persistence.Models;
 using Accounting_Business.Persistence.Resources;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Accounting_Business.Mappings
 {
@@ -17,6 +16,17 @@ namespace Accounting_Business.Mappings
             };
         }
 
+        public static CityResource ToResource(this City model)
+        {
+            if (model == null) return null;
+            return new CityResource
+            {
+                Id = model.Id,
+                Name = model.Name,
+                IsActive = model.IsActive
+            };
+        }
+
         public static CostCenter ToEntity(this CostCenterModel model)
         {
             if (model == null) return null;
@@ -25,6 +35,17 @@ namespace Accounting_Business.Mappings
                 Name = model.Name,
             };
         }
+        public static CostCenterResource ToResource(this CostCenter model)
+        {
+            if (model == null) return null;
+            return new CostCenterResource
+            {
+                Id = model.Id,
+                Name = model.Name,
+                IsActive = model.IsActive
+            };
+        }
+
 
         public static Agent ToEntity(this AgentModel model)
         {
@@ -32,6 +53,17 @@ namespace Accounting_Business.Mappings
             return new Agent
             {
                 Name = model.Name,
+            };
+        }
+
+        public static AgentResource ToResource(this Agent model)
+        {
+            if (model == null) return null;
+            return new AgentResource
+            {
+                Id = model.Id,
+                Name = model.Name,
+                IsActive = model.IsActive
             };
         }
 
@@ -44,6 +76,16 @@ namespace Accounting_Business.Mappings
             };
         }
 
+        public static ReceivablesPayablesClassificationResource ToResource(this ReceivablesPayablesClassification model)
+        {
+            if (model == null) return null;
+            return new ReceivablesPayablesClassificationResource
+            {
+                Id = model.Id,
+                Name = model.Name,
+                IsActive = model.IsActive
+            };
+        }
         public static Account ToEntity(this AccountModel model, IMapper mapper )
         {
             if (model == null) return null;
@@ -79,6 +121,30 @@ namespace Accounting_Business.Mappings
             resource.AccountClassificationName = entity.AccountClassification?.Name;
             resource.ParentAccountName = entity.ParentAccount?.Name;
             return resource;
+        }
+
+        public static Currency ToEntity(this CurrencyModel model, IMapper mapper)
+        {
+            if (model == null) return null;
+            return mapper.Map<CurrencyModel, Currency>(model);         
+        }
+
+        public static CurrencyResource ToResource(this Currency entity, IMapper mapper)
+        {
+            if (entity == null) return null;
+            return mapper.Map<Currency, CurrencyResource>(entity);
+        }
+
+        public static ExchangeCurrency ToEntity(this ExchangeCurrencyModel model, IMapper mapper)
+        {
+            if (model == null) return null;
+            return mapper.Map<ExchangeCurrencyModel, ExchangeCurrency>(model);
+        }
+
+        public static ExchangeCurrencyResource ToResource(this ExchangeCurrency entity, IMapper mapper)
+        {
+            if (entity == null) return null;
+            return mapper.Map<ExchangeCurrency, ExchangeCurrencyResource>(entity);
         }
 
     }

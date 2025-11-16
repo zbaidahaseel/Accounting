@@ -116,5 +116,48 @@ namespace Accounting_Api.Controllers
             var result = await _masterDataManager.GetChartOfAccounts(accountFilterModel);
             return Ok(result);
         }
+
+        public async Task<IActionResult> AddCurrency(CurrencyModel currencyModel)
+        {
+            var result = await _masterDataManager.AddCurrency(currencyModel);
+            return Ok(result);
+        }
+
+        public async Task<IActionResult> UpdateCurrency(CurrencyModel currencyModel)
+        {
+            var result = await _masterDataManager.UpdateCurrency(currencyModel);
+            return Ok(result);
+        }
+
+        public async Task<IActionResult> DeleteCurrency(int id)
+        {
+            var result = await _masterDataManager.DeleteCurrency(id);
+            return Ok(result);
+        }
+
+        public async Task<IActionResult> GetAllCurrencies()
+        {
+            var result = await _masterDataManager.GetAllCurrencies();
+            return Ok(result);
+        }
+
+        public async Task<IActionResult> AddExchangeCurrency(ExchangeCurrencyModel currencyModel)
+        {
+            var result = await _masterDataManager.AddExchangeCurrency(currencyModel);
+            return Ok(result);
+        }
+
+        public async Task<IActionResult> UpdateExchangeCurrency(ExchangeCurrencyModel currencyModel)
+        {
+            var result = await _masterDataManager.UpdateExchangeCurrency(currencyModel);
+            return Ok(result);
+        }
+
+        public async Task<IActionResult> GetAllExchangeCurrencies()
+        {
+            var result = await _masterDataManager.GetAllExchangeCurrencies();
+            return Ok(result);
+        }
+
     }
 }
